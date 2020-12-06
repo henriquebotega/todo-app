@@ -1,19 +1,48 @@
 import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+
+import "./styles.css";
 
 function App() {
 	const [value, setValue] = useState("");
 	const [items, setItems] = useState([]);
 
 	const handleAdd = () => {
-		setItems([...items, value]);
+		const newItem = {
+			id: uuidv4(),
+			value,
+			checked: false,
+		};
+
+		setItems([...items, newItem]);
 		setValue("");
+	};
+
+	const handleCheck = (itemId) => {
+		setItems([
+			...items.map((item) => {
+				if (item.id === itemId) {
+					item.checked = !item.checked;
+				}
+
+				return item;
+			}),
+		]);
 	};
 
 	return (
 		<>
 			<ul>
-				{items.map((item, index) => (
-					<li key={index}>{item}</li>
+				{items.map((item) => (
+					<li key={item.id} className={item.checked ? "checked" : ""}>
+						<input
+							data-testid="check-item"
+							type="checkbox"
+							value={item.checked}
+							onChange={() => handleCheck(item.id)}
+						/>
+						{item.value}
+					</li>
 				))}
 			</ul>
 
